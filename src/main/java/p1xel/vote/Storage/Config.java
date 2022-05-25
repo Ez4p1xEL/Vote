@@ -18,4 +18,8 @@ public class Config {
         Locale.language = Config.getLanguage();
     }
 
+    public static boolean getBool(String path) {
+        return Vote.getInstance().getConfig().getBoolean(path);
+    }
+
 }

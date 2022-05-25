@@ -44,3 +44,8 @@ vote-start:
   - '&7/Vote no &6投反对票'
   - '&a赞成&7(%yes%) &c反对&7(%no%)'
   - '&c还剩余 %time% 秒'
+
+update-check:
+  invalid: '无法检查更新: '
+  latest: '暂时没有任何更新 你的版本为最新版!'
+  outdate: '有版本更新 请前往MCBBS或SpigotMC下载!'

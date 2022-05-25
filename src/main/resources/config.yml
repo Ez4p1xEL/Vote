@@ -1,7 +1,10 @@
-Version: 1.0.0-Beta
+Version: 1.0.0
 
 Language: en
 
 # second(s)
 vote-time: 180
 notice-time: 30
+
+# Check update on SpigotMC.
+check-update: true

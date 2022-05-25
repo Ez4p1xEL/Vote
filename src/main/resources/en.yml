@@ -44,3 +44,8 @@ vote-start:
   - '&7/Vote no &6To vote NO'
   - '&aYES&7(%yes%) &cNO&7(%no%)'
   - '&cThere is %time% second(s) left.'
+
+update-check:
+  invalid: 'Unable to check for updates: '
+  latest: 'There is not a new update available.'
+  outdate: 'There is a new update available.'
