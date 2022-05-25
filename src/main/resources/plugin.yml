@@ -1,0 +1,8 @@
+name: Vote
+main: p1xel.vote.Vote
+version: 1.0.0-Beta
+api-version: 1.13
+author: p1xEL_mc
+commands:
+  Vote:
+    aliases: []

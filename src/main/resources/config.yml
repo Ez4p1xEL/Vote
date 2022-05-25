@@ -1,0 +1,7 @@
+Version: 1.0.0-Beta
+
+Language: en
+
+# second(s)
+vote-time: 180
+notice-time: 30

@@ -1,0 +1,8 @@
+kick:
+  message: '&aKick player PixelDDD'
+  commands:
+    - 'kick PixelDDD'
+freeDiamond:
+  message: '&aFree diamonds!'
+  commands:
+    - 'minecraft:give @a diamond 6'
