@@ -1,4 +1,4 @@
-package p1xel.vote.Storage.spigotmc;
+package p1xel.vote.spigotmc;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;

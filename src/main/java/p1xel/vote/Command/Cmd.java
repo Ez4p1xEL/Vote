@@ -6,6 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import p1xel.vote.BRun.CdChecker;
+import p1xel.vote.BRun.MessageTimer;
 import p1xel.vote.Storage.Config;
 import p1xel.vote.Storage.Data;
 import p1xel.vote.Storage.Locale;
@@ -25,7 +27,11 @@ public class Cmd implements CommandExecutor {
 
     public static String voteName = null;
 
-    HashMap<String, String> vote = new HashMap<>();
+    public static int realTimeLeft = Config.getInt("vote-time");
+
+    public static HashMap<String, String> vote() {
+        return new HashMap<>();
+    }
 
     @ParametersAreNonnullByDefault
     @Override
@@ -69,14 +75,14 @@ public class Cmd implements CommandExecutor {
             if (args[0].equalsIgnoreCase("yes")) {
 
                 if (isVoting) {
-                    if (vote.get(senderName) != null) {
+                    if (vote().get(senderName) != null) {
                         sender.sendMessage(Locale.getMessage("vote-already"));
                         return true;
                     }
 
                     voteYes++;
                     votePlayersAmount++;
-                    vote.put(senderName, "YES");
+                    vote().put(senderName, "YES");
                     sender.sendMessage(Locale.getMessage("yes-success"));
 
                     for (Player p : Bukkit.getOnlinePlayers()) {
@@ -95,14 +101,14 @@ public class Cmd implements CommandExecutor {
             if (args[0].equalsIgnoreCase("no")) {
 
                 if (isVoting) {
-                    if (vote.get(senderName) != null) {
+                    if (vote().get(senderName) != null) {
                         sender.sendMessage(Locale.getMessage("vote-already"));
                         return true;
                     }
 
                     voteNo++;
                     votePlayersAmount++;
-                    vote.put(senderName, "NO");
+                    vote().put(senderName, "NO");
                     sender.sendMessage(Locale.getMessage("no-success"));
 
                     for (Player p : Bukkit.getOnlinePlayers()) {
@@ -134,9 +140,12 @@ public class Cmd implements CommandExecutor {
                 votePlayersAmount = 0;
                 voteYes = 0;
                 voteNo = 0;
-                vote.clear();
+                vote().clear();
 
-                sender.sendMessage(Locale.getMessage("stop-success"));
+                new MessageTimer().cancel();
+                new CdChecker().cancel();
+
+                sender.sendMessage(Locale.getMessage("stop-success").replaceAll("%vote%", voteName));
                 return true;
 
             }
@@ -179,84 +188,22 @@ public class Cmd implements CommandExecutor {
                 isVoting = true;
                 voteName = args[1];
 
-                final int[] realTimeLeft = {Config.getInt("vote-time")};
+                realTimeLeft = Config.getInt("vote-time");
 
                 for (Player allp : Bukkit.getOnlinePlayers()) {
                     for (String m : Locale.get().getStringList("vote-start")) {
-                        m = m.replaceAll("%vote%", args[1]);
-                        m = m.replaceAll("%message%", Data.getVoteMessage(args[1]));
-                        m = m.replaceAll("%time%", String.valueOf(realTimeLeft[0]));
-                        m = m.replaceAll("%yes%", String.valueOf(voteYes));
-                        m = m.replaceAll("%no%", String.valueOf(voteNo));
+                        m = m.replaceAll("%vote%", Cmd.voteName);
+                        m = m.replaceAll("%message%", Data.getVoteMessage(Cmd.voteName));
+                        m = m.replaceAll("%time%", String.valueOf(Cmd.realTimeLeft));
+                        m = m.replaceAll("%yes%", String.valueOf(Cmd.voteYes));
+                        m = m.replaceAll("%no%", String.valueOf(Cmd.voteNo));
                         allp.sendMessage(Locale.translate(m));
                     }
                 }
 
-                new BukkitRunnable() {
+                new MessageTimer().runTaskTimer(Vote.getInstance(), 0L, Config.getInt("notice-time") * 20L);
 
-                    @Override
-                    public void run() {
-                        if (!isVoting) {
-                            cancel();
-                        }
-                        if (voteTimeLeft != 0) {
-                            for (Player allp : Bukkit.getOnlinePlayers()) {
-                                for (String m : Locale.get().getStringList("vote-start")) {
-                                    m = m.replaceAll("%vote%", args[1]);
-                                    m = m.replaceAll("%message%", Data.getVoteMessage(args[1]));
-                                    m = m.replaceAll("%time%", String.valueOf(realTimeLeft[0]));
-                                    m = m.replaceAll("%yes%", String.valueOf(voteYes));
-                                    m = m.replaceAll("%no%", String.valueOf(voteNo));
-                                    allp.sendMessage(Locale.translate(m));
-                                }
-                            }
-                        }
-
-                        if (voteTimeLeft == Config.getInt("vote-time")) {
-                            cancel();
-                        }
-                    }
-
-                }.runTaskTimer(Vote.getInstance(), 0L, Config.getInt("notice-time") * 20L);
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!isVoting) {
-                            cancel();
-                        }
-                        if (voteTimeLeft >= Config.getInt("vote-time")) {
-                            isVoting = false;
-                            voteTimeLeft = 0;
-                            String m = Locale.getMessage("vote-end").replaceAll("%vote%", args[1]).replaceAll("%yes%", String.valueOf(voteYes)).replaceAll("%no%", String.valueOf(voteNo));
-                            for (Player allp : Bukkit.getOnlinePlayers()) {
-                                allp.sendMessage(m);
-                            }
-                            if (voteYes > voteNo) {
-                                for (String cmds : Data.getCommands(args[1])) {
-                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmds);
-                                }
-                                for (Player allp : Bukkit.getOnlinePlayers()) {
-                                    allp.sendMessage(Locale.getMessage("vote-result-yes").replaceAll("%vote%", args[1]));
-                                }
-                            } else {
-                                for (Player allp : Bukkit.getOnlinePlayers()) {
-                                    allp.sendMessage(Locale.getMessage("vote-result-no").replaceAll("%vote%", args[1]));
-                                }
-                            }
-
-
-                            vote.clear();
-                            voteYes = 0;
-                            voteNo = 0;
-                            votePlayersAmount = 0;
-                            cancel();
-                        } else {
-                            voteTimeLeft++;
-                            realTimeLeft[0]--;
-                        }
-                    }
-                }.runTaskTimer(Vote.getInstance(), 0L, 20L);
+                new CdChecker().runTaskTimer(Vote.getInstance(), 0L, 20L);
 
 
 
@@ -288,7 +235,7 @@ public class Cmd implements CommandExecutor {
                     voteYes = 0;
                     voteName = null;
                     voteTimeLeft = 0;
-                    vote.clear();
+                    vote().clear();
                 }
                 return true;
             }

@@ -5,7 +5,7 @@ import p1xel.vote.Command.Cmd;
 import p1xel.vote.Storage.Config;
 import p1xel.vote.Storage.Data;
 import p1xel.vote.Storage.Locale;
-import p1xel.vote.Storage.spigotmc.UpdateChecker;
+import p1xel.vote.spigotmc.UpdateChecker;
 import p1xel.vote.bStats.Metrics;
 
 public class Vote extends JavaPlugin {
