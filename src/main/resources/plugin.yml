@@ -1,6 +1,6 @@
 name: Vote
 main: p1xel.vote.Vote
-version: 1.0.1
+version: 1.0.2
 api-version: 1.13
 author: p1xEL_mc
 commands:
