@@ -14,11 +14,11 @@ public class MessageTimer extends BukkitRunnable {
     public void run() {
 
         if (!Cmd.isVoting) {
-            cancel();
+            this.cancel();
         }
 
         if (Cmd.voteTimeLeft == Config.getInt("vote-time")) {
-            cancel();
+            this.cancel();
         }
 
         if (Cmd.voteTimeLeft != 0) {
@@ -33,6 +33,8 @@ public class MessageTimer extends BukkitRunnable {
                 }
             }
         }
+
+        Cmd.messageTimerID = getTaskId();
 
 
     }

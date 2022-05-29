@@ -1,10 +1,13 @@
-Version: 1.0.2
+Version: 1.0.3
 
 Language: en
 
 # second(s)
 vote-time: 180
 notice-time: 30
+# for all player
+vote-cd: 30
+player-vote-cd: 60
 
 # Check update on SpigotMC.
 check-update: true

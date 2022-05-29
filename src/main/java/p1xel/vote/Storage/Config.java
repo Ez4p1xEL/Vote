@@ -16,6 +16,7 @@ public class Config {
     public static void reloadConfig() {
         Vote.getInstance().reloadConfig();
         Locale.language = Config.getLanguage();
+        Cmd.voteCD = Config.getInt("vote-cd");
     }
 
     public static boolean getBool(String path) {
