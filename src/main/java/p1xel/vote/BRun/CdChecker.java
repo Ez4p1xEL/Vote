@@ -42,7 +42,6 @@ public class CdChecker extends BukkitRunnable {
             Cmd.voteYes = 0;
             Cmd.voteNo = 0;
             Cmd.votePlayersAmount = 0;
-            new voteCD().runTaskTimer(Vote.getInstance(), 0L, 20L);
             cancel();
         } else {
             Cmd.voteTimeLeft++;

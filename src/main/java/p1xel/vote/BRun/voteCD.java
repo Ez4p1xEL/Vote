@@ -15,6 +15,7 @@ public class voteCD extends BukkitRunnable {
             cancel();
         }
 
+        Cmd.voteCDID = getTaskId();
         Cmd.voteCD--;
 
 

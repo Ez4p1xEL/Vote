@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import p1xel.vote.BRun.CdChecker;
 import p1xel.vote.BRun.MessageTimer;
+import p1xel.vote.BRun.voteCD;
 import p1xel.vote.Storage.Config;
 import p1xel.vote.Storage.Data;
 import p1xel.vote.Storage.Locale;
@@ -38,6 +39,7 @@ public class Cmd implements CommandExecutor {
 
     public static int cdCheckerID = 0;
     public static int messageTimerID = 0;
+    public static int voteCDID = 0;
 
     HashMap<String, Integer> pcd = new HashMap<>();
 
@@ -103,6 +105,8 @@ public class Cmd implements CommandExecutor {
 
                 Bukkit.getServer().getScheduler().cancelTask(cdCheckerID);
                 Bukkit.getServer().getScheduler().cancelTask(messageTimerID);
+                Bukkit.getServer().getScheduler().cancelTask(voteCDID);
+                canVote = true;
 
                 sender.sendMessage(Locale.getMessage("stop-success").replaceAll("%vote%", voteName));
                 return true;
@@ -187,6 +191,8 @@ public class Cmd implements CommandExecutor {
                         pcd.put(sender.getName(), pcd.get(sender.getName()) - 1);
                     }
                 }.runTaskTimer(Vote.getInstance(), 0L, 20L);
+
+                new voteCD().runTaskTimer(Vote.getInstance(), Config.getInt("vote-time") * 20L, 20L);
 
                 return true;
 
